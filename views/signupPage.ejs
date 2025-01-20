@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome Webshop!</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+
+<body>
+        <form action="/signup" method="post" enctype="application/x-www-form-urlencoded">
+            
+                <legend>Account creation</legend>
+                <div class="spacer"></div>
+                <h2> Start shopping today </h2>
+                <div class="spacer"></div>
+                <div>
+                    <label for="fname">Full Name*:</label><br>
+                    <input type="text" name="fname" id="fname" required>
+                </div>
+                <div>
+                    <label for="fname">Last Name*:</label><br>
+                    <input type="text" name="lname" id="lname" required>
+                </div>
+                <div>
+                    <label for="email">eMail address*:</label><br>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div>
+                    <label for="address">Address*:</label><br>
+                    <input type="text" name="address" id="address" required>
+                </div>
+                <div>
+                    <label for="street">Street*:</label><br>
+                    <input type="text" name="street" id="street" required>
+                </div>
+                <div>
+                    <label for="postal_code">Postal code:</label><br>
+                    <input type="number" name="postal_code" id="postal_code" required>
+                </div>
+                <div class="terms">
+                    <input type="checkbox" name="agree" id="agree" required>
+                    <label for="agree">I agree to <a href="">terms and conditions</a></label>
+                </div>
+                <div>
+                    <button type="submit">Register!</button>
+                </div>
+                
+                <div class="spacer"></div>            
+        </form>    
+
+</body>
+
+</html>
