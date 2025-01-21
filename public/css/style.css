@@ -55,6 +55,7 @@ legend {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     font-family: 'Open Sans';
+    font-size: 12px;
 }
 
 form label {
@@ -88,6 +89,7 @@ button[type="submit"] {
     font-weight: bold;
     border-radius: 5px;
     font-family: 'Open Sans';
+    font-size: 12px;
 }
 
 button[type="submit"]:hover{
