@@ -7,7 +7,6 @@ function getSignup(req, res) {
 }
 
 
-
 module.exports = {
     getHome,
     getSignup
