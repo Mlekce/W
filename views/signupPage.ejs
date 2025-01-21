@@ -6,50 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Awesome Webshop!</title>
     <link rel="stylesheet" href="css/style.css">
-    
+
 </head>
 
 <body>
-        <form action="/signup" method="post" enctype="application/x-www-form-urlencoded">
-            
-                <legend>Account creation</legend>
-                <div class="spacer"></div>
-                <h2> Start shopping today </h2>
-                <div class="spacer"></div>
-                <div>
-                    <label for="fname">Full Name*:</label><br>
-                    <input type="text" name="fname" id="fname" required>
-                </div>
-                <div>
-                    <label for="fname">Last Name*:</label><br>
-                    <input type="text" name="lname" id="lname" required>
-                </div>
-                <div>
-                    <label for="email">eMail address*:</label><br>
-                    <input type="email" name="email" id="email" required>
-                </div>
-                <div>
-                    <label for="address">Address*:</label><br>
-                    <input type="text" name="address" id="address" required>
-                </div>
-                <div>
-                    <label for="street">Street*:</label><br>
-                    <input type="text" name="street" id="street" required>
-                </div>
-                <div>
-                    <label for="postal_code">Postal code:</label><br>
-                    <input type="number" name="postal_code" id="postal_code" required>
-                </div>
-                <div class="terms">
-                    <input type="checkbox" name="agree" id="agree" required>
-                    <label for="agree">I agree to <a href="">terms and conditions</a></label>
-                </div>
-                <div>
-                    <button type="submit">Register!</button>
-                </div>
-                
-                <div class="spacer"></div>            
-        </form>    
+    <form action="/signup" method="post" enctype="application/x-www-form-urlencoded">
+
+        <legend>Account creation</legend>
+        <div class="spacer"></div>
+        <h2> Start shopping today </h2>
+        <div class="spacer"></div>
+        <h5>Personal data</h5>
+        <div>
+            <label for="fname">First Name*:</label><br>
+            <input type="text" name="fname" id="fname" required>
+        </div>
+        <div>
+            <label for="fname">Last Name*:</label><br>
+            <input type="text" name="lname" id="lname" required>
+        </div>
+        <div>
+            <label for="email">eMail address*:</label><br>
+            <input type="email" name="email" id="email" required>
+        </div>
+        <div>
+            <label for="passwd">Password*</label>
+            <input type="password" name="passwd" id="passwd" required>
+        </div>
+        <div>
+            <label for="cpasswd">Confirm Password*</label>
+            <input type="password" name="cpasswd" id="cpasswd" required>
+        </div>
+        <div class="spacer"></div>
+        <h5>Address data</h5>
+        <div>
+            <label for="state">State*</label>
+            <input type="text" name="state" id="state" required>
+        </div>
+        <div>
+            <label for="address">Address*:</label><br>
+            <input type="text" name="address" id="address" required>
+        </div>
+        <div>
+            <label for="street">Street*:</label><br>
+            <input type="text" name="street" id="street" required>
+        </div>
+        <div>
+            <label for="postal_code">Postal code*:</label><br>
+            <input type="number" name="postal_code" id="postal_code" required>
+        </div>
+        <div class="terms">
+            <input type="checkbox" name="agree" id="agree" required>
+            <label for="agree">I agree to <a href="">terms and conditions</a></label>
+        </div>
+        <div>
+            <button type="submit">Register!</button>
+        </div>
+
+        <div class="spacer"></div>
+    </form>
 
 </body>
 
