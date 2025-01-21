@@ -6,6 +6,9 @@ function getSignup(req, res) {
     res.render("signupPage")
 }
 
+function postSignup(req, res){
+    return
+}
 
 module.exports = {
     getHome,
