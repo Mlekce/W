@@ -11,7 +11,6 @@ class Customer {
         this.phone = phone
         this.country = country
         this.city = city
-        this.state = null
         this.pcode = pcode
         this.address = address
     }
@@ -42,12 +41,13 @@ class Customer {
         await this.checkIfUserExists();
         const hashedPassword = await this.hashPassword();
         const pool = await getPool();
+        let arr = [this.fname, this.lname, this.email, hashedPassword, this.phone, this.address, this.city, this.pcode, this.country];
+        console.log(arr)
         try {
             let querry = `INSERT INTO 
-            Customers (first_name, last_name, email, password_hash, phone, address, state, city, postal_code, country)
+            Customers (first_name, last_name, email, password_hash, phone, address, city, postal_code, country)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            const [result] = await pool.execute(querry,
-                [this.fname, this.lname, this.email, hashedPassword, this.phone, this.address, this.state, this.city, this.pcode, this.country]);
+            const [result] = await pool.execute(querry, arr);
 
             console.log("Inserted customer by id:", result.insertId)
         } catch (error) {

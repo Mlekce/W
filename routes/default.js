@@ -5,6 +5,6 @@ const upload = require("../utils/multerMiddleware");
 
 router.get("/", controllers.getHome);
 router.get("/signup", controllers.getSignup);
-//router.post("/signup", controllers.postSignup);
+router.post("/signup", controllers.postSignup);
 
 module.exports = router;

@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendMail(recipient) {
+async function sendMail(recipient, link) {
   const info = await transporter.sendMail({
     from: `${sender.alias} <${sender.user}>`,
     to: recipient,
@@ -28,4 +28,4 @@ async function sendMail(recipient) {
   console.log("Message sent: %s", info.messageId);
 }
 
-sendMail('x@coded.in.rs').catch(console.error);
+sendMail('x@coded.in.rs', token = null).catch(console.error);
