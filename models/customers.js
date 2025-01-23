@@ -17,42 +17,22 @@ class Customer {
 
     comparePasswords() {
         if (this.passwd.length < 8 || this.cpasswd.length < 8) {
-            throw new Error("Passwords must be at least 8 characters long.");
+            return { check: false, error: "Passwords must be at least 8 characters long." }
         }
         if (this.passwd !== this.cpasswd) {
-            throw new Error("Passwords do not match.");
+            return { check: false, error: "Passwords do not match." }
         }
-        return true;
+        return { check: true, error: null }
     }
 
     async hashPassword() {
         try {
             this.comparePasswords();
             const hpwd = await bcrypt.hash(this.passwd, 10);
-            return hpwd;
+            return { h_check: hpwd, h_error: null };
 
-        } catch (error) {
-            throw new Error("Error hashing password!");
-        }
-    }
-
-    async addCustomer() {
-        this.comparePasswords();
-        await this.checkIfUserExists();
-        const hashedPassword = await this.hashPassword();
-        const pool = await getPool();
-        let arr = [this.fname, this.lname, this.email, hashedPassword, this.phone, this.address, this.city, this.pcode, this.country];
-        console.log(arr)
-        try {
-            let querry = `INSERT INTO 
-            Customers (first_name, last_name, email, password_hash, phone, address, city, postal_code, country)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            const [result] = await pool.execute(querry, arr);
-
-            console.log("Inserted customer by id:", result.insertId)
-        } catch (error) {
-            console.error(`Error inserting new customer ${error}`);
-            throw new Error;
+        } catch (err) {
+            return { h_check: null, h_error: `Error hashing password! Message: ${err}` };
         }
     }
 
@@ -62,11 +42,26 @@ class Customer {
             let querry = `SELECT email FROM Customers WHERE email = (?)`
             const [rows] = await pool.execute(querry, [this.email]);
             if (rows.length !== 0) {
-                throw new Error("User already exists!")
+                return { u_err: "User already exists! " }
             }
-            return false;
+            return { u_err: null };
         } catch (error) {
-            throw new Error("Error connecting to database.");
+            return { u_err: `Error connecting to database. Message: ${error}` }
+        }
+    }
+
+    async addCustomer() {
+        const pool = await getPool();
+        let arr = [this.fname, this.lname, this.email, hashedPassword, this.phone, this.address, this.city, this.pcode, this.country];
+        try {
+            let querry = `INSERT INTO 
+            Customers (first_name, last_name, email, password_hash, phone, address, city, postal_code, country)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const [result] = await pool.execute(querry, arr);
+            console.log("Inserted customer by id:", result.insertId)
+        } catch (error) {
+            console.error(`Error inserting new customer ${error}`);
+            throw new Error;
         }
     }
 }
