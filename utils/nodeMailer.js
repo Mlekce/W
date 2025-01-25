@@ -1,19 +1,23 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const sender = {
-    user: "test@coded.in.rs",
-    pass: "secretpassword",
+    user: process.env.SENDER_USER,
+    pass: process.env.SENDER_PASSWD,
     alias: "My awesome webshop"
 }
 
 const transporter = nodemailer.createTransport({
-  host: "box.coded.in.rs",
+  host: process.env.SENDER_HOSTNAME,
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
     user: sender.user,
     pass: sender.pass,
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 async function sendMail(recipient, link) {
@@ -21,11 +25,10 @@ async function sendMail(recipient, link) {
     from: `${sender.alias} <${sender.user}>`,
     to: recipient,
     subject: "Registration",
-    text: `Hello, and welcome to my awesome webshop. Please click on this link to confirm registration: ${link}`, // plain text body
-    html: "<b>Hello world?</b>", // html body
+    //text: `Welcome to My awesome Webshop! Please click on this link to activate your account: <a href=/confirmation/${link}>Click here to confirm!</a>`,
+    html: `<b>Welcome to My awesome Webshop!</b><br><p>Please click on this link to activate your account: <a href="http://localhost/confirmation/${link}">Click here to confirm!</a></p>`, 
   });
-
   console.log("Message sent: %s", info.messageId);
 }
 
-sendMail('x@coded.in.rs', token = null).catch(console.error);
+module.exports = sendMail

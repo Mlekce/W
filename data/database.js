@@ -1,12 +1,13 @@
 const mysql2 = require("mysql2/promise");
+require("dotenv").config();
 
 async function getPool() {
     const pool = mysql2.createPool({
-        host: 'localhost',
-        user: 'root',
-        password: 'my-secret-pw',
-        database : "webshop",
-        port: 3306,
+        host: process.env.SQL_HOST,
+        user: process.env.SQL_USER,
+        password: process.env.PASSWORD,
+        database : process.env.DATABASE,
+        port: process.env.PORT,
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0

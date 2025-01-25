@@ -1,5 +1,9 @@
 const bcrypt = require("bcrypt");
 const getPool = require("../data/database");
+const sendMail = require("../utils/nodeMailer");
+const { generateEmailToken, verifyToken } = require("../utils/jwt");
+const moment = require("moment");
+require("dotenv").config();
 
 class Customer {
     constructor(fname, lname, passwd, cpasswd, email, phone, country, city, pcode, address) {
@@ -42,9 +46,9 @@ class Customer {
             let querry = `SELECT email FROM Customers WHERE email = (?)`
             const [rows] = await pool.execute(querry, [this.email]);
             if (rows.length !== 0) {
-                return { error : "User already exists! " }
+                return { error: "User already exists! " }
             }
-            return { error : null };
+            return { error: null };
         } catch (error) {
             return { error: `Error connecting to database. Message: ${error}` }
         }
@@ -59,11 +63,51 @@ class Customer {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const [result] = await pool.execute(querry, arr);
             console.log("Inserted customer by id:", result.insertId);
-            return {result: result.insertId, error: null}
+            return { result: result.insertId, error: null }
         } catch (error) {
             console.error(`Error inserting new customer ${error}`);
-            return { result: null, error : error}
+            return { result: null, error: error }
         }
+    }
+
+    async findUser() {
+        const pool = await getPool();
+        try {
+            let querry = `SELECT id FROM Customers WHERE email = (?)`
+            const [result] = await pool.execute(querry, [this.email]);
+            if (result.length === 0) {
+                return null
+            }
+            return result;
+        } catch (error) {
+            console.error(error);
+            return null
+        }
+    }
+
+    async sendConfirmationEmail() {
+        let secretKey = process.env.EMAIL_SECRET_KEY;
+        let customerId = await this.findUser();
+        if (customerId === null) {
+            return false
+        }
+        const expireAt = moment().add(1, 'hour').unix();
+        const token = generateEmailToken(customerId, secretKey);
+        const query = `
+        INSERT INTO EmailVerificationTokens (customer_id, token, expires_at)
+        VALUES (?, ?, ?);
+      `;
+        await pool.execute(query, [customerId, token, expireAt])
+            .catch(error => {
+                return { status: false, error: error }
+            });
+        await sendMail(this.email, token)
+            .catch(error => {
+                if (error) {
+                    return { status: false, error: error }
+                }
+            });
+        return { status: true, error: null }
     }
 }
 
