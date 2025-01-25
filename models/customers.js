@@ -29,10 +29,10 @@ class Customer {
         try {
             this.comparePasswords();
             const hpwd = await bcrypt.hash(this.passwd, 10);
-            return { h_check: hpwd, h_error: null };
+            return { check: hpwd, error: null };
 
         } catch (err) {
-            return { h_check: null, h_error: `Error hashing password! Message: ${err}` };
+            return { check: null, error: `Error hashing password! Message: ${err}` };
         }
     }
 
@@ -42,15 +42,15 @@ class Customer {
             let querry = `SELECT email FROM Customers WHERE email = (?)`
             const [rows] = await pool.execute(querry, [this.email]);
             if (rows.length !== 0) {
-                return { u_err: "User already exists! " }
+                return { error : "User already exists! " }
             }
-            return { u_err: null };
+            return { error : null };
         } catch (error) {
-            return { u_err: `Error connecting to database. Message: ${error}` }
+            return { error: `Error connecting to database. Message: ${error}` }
         }
     }
 
-    async addCustomer() {
+    async addCustomer(hashedPassword) {
         const pool = await getPool();
         let arr = [this.fname, this.lname, this.email, hashedPassword, this.phone, this.address, this.city, this.pcode, this.country];
         try {
@@ -58,10 +58,11 @@ class Customer {
             Customers (first_name, last_name, email, password_hash, phone, address, city, postal_code, country)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const [result] = await pool.execute(querry, arr);
-            console.log("Inserted customer by id:", result.insertId)
+            console.log("Inserted customer by id:", result.insertId);
+            return {result: result.insertId, error: null}
         } catch (error) {
             console.error(`Error inserting new customer ${error}`);
-            throw new Error;
+            return { result: null, error : error}
         }
     }
 }

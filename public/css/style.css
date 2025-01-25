@@ -118,6 +118,14 @@ h5 {
     font-family: 'Open Sans';
 }
 
+.error {
+    font-family: 'Open Sans';
+    grid-column: span 2;
+    color: rgb(243, 32, 32);
+    text-align: center;
+    font-size: 14px;
+}
+
 @media screen and (max-width: 500px) {
     form {
         display: flex;

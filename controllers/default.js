@@ -6,7 +6,7 @@ function getHome(req, res) {
 }
 
 function getSignup(req, res) {
-    res.render("signupPage", {error : null})
+    res.render("signupPage", { error: null })
 }
 
 async function postSignup(req, res) {
@@ -29,23 +29,31 @@ async function postSignup(req, res) {
         return
     }
 
-    let { u_err } = await newCustomer.checkIfUserExists();
-    if (u_err) {
-        res.render("signupPage", { error: u_err || null });
+    ({ error } = await newCustomer.checkIfUserExists());
+    if (error) {
+        res.render("signupPage", { error: error || null });
         return
     }
 
-    let { h_check, h_error } = await newCustomer.hashPassword();
-    if (h_check === null) {
-        res.status(500).render("500", { error: h_error || null });
+    ({ check, error } = await newCustomer.hashPassword());
+    if (check === null) {
+        res.status(500).render("500", { error: error || null });
         return
     }
 
-    newCustomer.addCustomer();
-    res.redirect("/login");
+    let result;
+    ({ result, error } = await newCustomer.addCustomer(check));
+    if (result) {
+        res.redirect("/login");
+        return
+    }
+    else {
+        res.status(500).render("500", { error: error || null });
+        return
+    }
 }
 
-function getLogin(req, res){
+function getLogin(req, res) {
     res.send("Login not yet implemented!")
 }
 
