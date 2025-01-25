@@ -15,8 +15,6 @@ function verifyToken(token, secretKey) {
     }
 }
 
-console.log(generateEmailToken(1, "w31a14b8xx5z70123veYgz"))
-
 module.exports = {
     generateEmailToken,
     verifyToken

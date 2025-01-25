@@ -78,7 +78,7 @@ class Customer {
             if (result.length === 0) {
                 return null
             }
-            return result;
+            return result[0].id;
         } catch (error) {
             console.error(error);
             return null
@@ -89,26 +89,71 @@ class Customer {
         let secretKey = process.env.EMAIL_SECRET_KEY;
         let customerId = await this.findUser();
         if (customerId === null) {
-            return false
+            return { status: false, error: 'User not found' }
         }
-        const expireAt = moment().add(1, 'hour').unix();
         const token = generateEmailToken(customerId, secretKey);
+        const expireAt = moment().add(1, 'hour').unix();
+        const pool = await getPool();
         const query = `
         INSERT INTO EmailVerificationTokens (customer_id, token, expires_at)
         VALUES (?, ?, ?);
       `;
-        await pool.execute(query, [customerId, token, expireAt])
-            .catch(error => {
+        try {
+            await pool.execute(query, [customerId, token, expireAt])
+        }
+        catch (error) {
+            return { status: false, error: error }
+        };
+        try {
+            await sendMail(this.email, token);
+        }
+        catch (error) {
+            if (error) {
                 return { status: false, error: error }
-            });
-        await sendMail(this.email, token)
-            .catch(error => {
-                if (error) {
-                    return { status: false, error: error }
-                }
-            });
+            }
+        };
         return { status: true, error: null }
     }
+
+    static async verifyEmail(token) {
+        const pool = await getPool();
+        let query = `SELECT * FROM EmailVerificationTokens WHERE token = (?)`;
+        try {
+            const [result] = await pool.execute(query, [token]);
+            if (result.length === 0) {
+                return { status: false, error: "Invalid token" };
+            }
+
+            const tokenData = result[0];
+            if (moment().unix() > tokenData.expires_at) {
+                return { status: false, error: "Token has expired" };
+            }
+
+            const customerQuery = `SELECT email_confirmed FROM Customers WHERE customer_id = (?)`;
+            const [customerResult] = await pool.execute(customerQuery, [tokenData.customer_id]);
+            if (customerResult.length === 0) {
+                return { status: false, error: "Customer not found" };
+            }
+            
+            const customer = customerResult[0];
+            if (customer.email_confirmed) {
+                return { status: false, error: "Email is already confirmed" };
+            }
+
+            const updateQuery = `UPDATE Customers SET email_confirmed = TRUE, email_token = ? WHERE customer_id = ?`;
+            await pool.execute(updateQuery, [token, tokenData.customer_id]);
+            
+            const deleteTokenQuery = `DELETE FROM EmailVerificationTokens WHERE token = ?`;
+            await pool.execute(deleteTokenQuery, [token]);
+            
+            return { status: true, message: "Email successfully confirmed" };
+            
+        } catch (error) {
+            console.error(error);
+            return { status: false, error: "An error occurred while verifying the email" };
+        }
+    }
+
 }
 
 
