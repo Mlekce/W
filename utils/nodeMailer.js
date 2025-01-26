@@ -26,7 +26,7 @@ async function sendMail(recipient, link) {
     to: recipient,
     subject: "Registration",
     //text: `Welcome to My awesome Webshop! Please click on this link to activate your account: <a href=/confirmation/${link}>Click here to confirm!</a>`,
-    html: `<b>Welcome to My awesome Webshop!</b><br><p>Please click on this link to activate your account: <a href="http://localhost/confirmation/${link}">Click here to confirm!</a></p>`, 
+    html: `<b>Welcome to My awesome Webshop!</b><br><p>Please click on this link to activate your account: <a href="http://localhost:4000/confirm/${link}">Click here to confirm!</a></p>`, 
   });
   console.log("Message sent: %s", info.messageId);
 }

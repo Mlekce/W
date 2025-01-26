@@ -73,12 +73,12 @@ class Customer {
     async findUser() {
         const pool = await getPool();
         try {
-            let querry = `SELECT id FROM Customers WHERE email = (?)`
+            let querry = `SELECT customer_id FROM Customers WHERE email = (?)`
             const [result] = await pool.execute(querry, [this.email]);
             if (result.length === 0) {
                 return null
             }
-            return result[0].id;
+            return result[0].customer_id;
         } catch (error) {
             console.error(error);
             return null
@@ -92,7 +92,7 @@ class Customer {
             return { status: false, error: 'User not found' }
         }
         const token = generateEmailToken(customerId, secretKey);
-        const expireAt = moment().add(1, 'hour').unix();
+        const expireAt = moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss');
         const pool = await getPool();
         const query = `
         INSERT INTO EmailVerificationTokens (customer_id, token, expires_at)
@@ -125,7 +125,7 @@ class Customer {
             }
 
             const tokenData = result[0];
-            if (moment().unix() > tokenData.expires_at) {
+            if (moment().format('YYYY-MM-DD HH:mm:ss') > tokenData.expires_at) {
                 return { status: false, error: "Token has expired" };
             }
 
@@ -136,11 +136,11 @@ class Customer {
             }
             
             const customer = customerResult[0];
-            if (customer.email_confirmed) {
+            if (customer.email_confirmed === 1) {
                 return { status: false, error: "Email is already confirmed" };
             }
 
-            const updateQuery = `UPDATE Customers SET email_confirmed = TRUE, email_token = ? WHERE customer_id = ?`;
+            const updateQuery = `UPDATE Customers SET email_confirmed = 1, email_token = ? WHERE customer_id = ?`;
             await pool.execute(updateQuery, [token, tokenData.customer_id]);
             
             const deleteTokenQuery = `DELETE FROM EmailVerificationTokens WHERE token = ?`;

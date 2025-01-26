@@ -44,8 +44,16 @@ async function postSignup(req, res) {
     let result;
     ({ result, error } = await newCustomer.addCustomer(check));
     if (result) {
-        res.redirect("/login");
-        return
+        let status;
+        ({ status, error } = await newCustomer.sendConfirmationEmail())
+        if (status) {
+            res.redirect("/login");
+            return
+        }
+        else {
+            res.status(500).render("500", { error: error || null });
+            return
+        }
     }
     else {
         res.status(500).render("500", { error: error || null });
@@ -57,9 +65,24 @@ function getLogin(req, res) {
     res.send("Login not yet implemented!")
 }
 
+async function activateAccount(req, res) {
+    const token = String(req.params.id);
+    let verify = await Customer.verifyEmail(token);
+    if (verify.hasOwnProperty("message")) {
+        console.log(verify.message)
+        res.status(200).redirect("/login");
+        return
+    }
+    else {
+        res.status(500).render(500, { error: verify.error || null });
+        return
+    }
+}
+
 module.exports = {
     getHome,
     getSignup,
     postSignup,
-    getLogin
+    getLogin,
+    activateAccount
 }
