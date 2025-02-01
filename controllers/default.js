@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Customer = require("../models/customers");
 
 
@@ -10,6 +11,11 @@ function getSignup(req, res) {
 }
 
 async function postSignup(req, res) {
+    let result = validationResult(req);
+    if (!result.isEmpty()) {
+        res.status(500).render("login", { error: "Error validating input." })
+    }
+
     let data = req.body;
     let newCustomer = new Customer(
         data.fname,
@@ -41,7 +47,6 @@ async function postSignup(req, res) {
         return
     }
 
-    let result;
     ({ result, error } = await newCustomer.addCustomer(check));
     if (result) {
         let status;
@@ -65,6 +70,26 @@ function getLogin(req, res) {
     res.send("Login not yet implemented!")
 }
 
+async function postLogin(req, res) {
+    let result = validationResult(req);
+    if (!result.isEmpty()) {
+        res.status(400).render("login", { error: "Error validating input." });
+        return
+    }
+    let email = req.body.email;
+    let passwd = req.body.passwd;
+    let { isAuth, account } = await Customer.loginUser(email, passwd);
+    if (isAuth) {
+        res.locals.isAuth = isAuth;
+        res.locals.account = account;
+        res.redirect("/");
+        return
+    } else {
+        res.render("/login", { error: "Wrong email or password." });
+        return
+    }
+}
+
 async function activateAccount(req, res) {
     const token = String(req.params.id);
     let verify = await Customer.verifyEmail(token);
@@ -84,5 +109,6 @@ module.exports = {
     getSignup,
     postSignup,
     getLogin,
+    postLogin,
     activateAccount
 }

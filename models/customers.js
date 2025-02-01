@@ -43,7 +43,7 @@ class Customer {
     async checkIfUserExists() {
         const pool = await getPool();
         try {
-            let querry = `SELECT email FROM Customers WHERE email = (?)`
+            let querry = `SELECT email FROM Customers WHERE email = (?) LIMIT 1`
             const [rows] = await pool.execute(querry, [this.email]);
             if (rows.length !== 0) {
                 return { error: "User already exists! " }
@@ -73,7 +73,7 @@ class Customer {
     async findUser() {
         const pool = await getPool();
         try {
-            let querry = `SELECT customer_id FROM Customers WHERE email = (?)`
+            let querry = `SELECT customer_id FROM Customers WHERE email = (?) LIMIT 1`
             const [result] = await pool.execute(querry, [this.email]);
             if (result.length === 0) {
                 return null
@@ -82,6 +82,30 @@ class Customer {
         } catch (error) {
             console.error(error);
             return null
+        }
+    }
+
+    static async loginUser(email, passwd) {
+        let pool = await getPool();
+        try {
+            let querry = `SELECT * FROM Customers WHERE email = (?) LIMIT 1`;
+            let [result] = await pool.execute(querry, [email]);
+            if (result.length === 0) {
+                return { isAuth: false, account: null };
+            }
+            try {
+                result = await bcrypt.compare(passwd, result[0].password_hash);
+                if (!result) {
+                    return { isAuth: false, account: null };
+                }
+                return { isAuth: true, account: email };
+            } catch (error) {
+                console.error(error);
+                return { isAuth: false, account: null };
+            }
+        } catch (error) {
+            console.error(error);
+            return { isAuth: false, account: null };
         }
     }
 
@@ -117,7 +141,7 @@ class Customer {
 
     static async verifyEmail(token) {
         const pool = await getPool();
-        let query = `SELECT * FROM EmailVerificationTokens WHERE token = (?)`;
+        let query = `SELECT * FROM EmailVerificationTokens WHERE token = (?) LIMIT 1`;
         try {
             const [result] = await pool.execute(query, [token]);
             if (result.length === 0) {
@@ -134,7 +158,7 @@ class Customer {
             if (customerResult.length === 0) {
                 return { status: false, error: "Customer not found" };
             }
-            
+
             const customer = customerResult[0];
             if (customer.email_confirmed === 1) {
                 return { status: false, error: "Email is already confirmed" };
@@ -142,12 +166,12 @@ class Customer {
 
             const updateQuery = `UPDATE Customers SET email_confirmed = 1, email_token = ? WHERE customer_id = ?`;
             await pool.execute(updateQuery, [token, tokenData.customer_id]);
-            
+
             const deleteTokenQuery = `DELETE FROM EmailVerificationTokens WHERE token = ?`;
             await pool.execute(deleteTokenQuery, [token]);
-            
+
             return { status: true, message: "Email successfully confirmed" };
-            
+
         } catch (error) {
             console.error(error);
             return { status: false, error: "An error occurred while verifying the email" };
