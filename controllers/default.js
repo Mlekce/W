@@ -67,13 +67,14 @@ async function postSignup(req, res) {
 }
 
 function getLogin(req, res) {
-    res.send("Login not yet implemented!")
+    res.render("loginPage", { error: null });
+    return
 }
 
 async function postLogin(req, res) {
     let result = validationResult(req);
     if (!result.isEmpty()) {
-        res.status(400).render("login", { error: "Error validating input." });
+        res.status(400).render("loginPage", { error: "Error validating input." });
         return
     }
     let email = req.body.email;
@@ -85,7 +86,7 @@ async function postLogin(req, res) {
         res.redirect("/");
         return
     } else {
-        res.render("/login", { error: "Wrong email or password." });
+        res.render("loginPage", { error: "Wrong email or password." });
         return
     }
 }

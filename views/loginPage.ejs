@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome Webshop!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        form > div {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+        <legend>Login page</legend>
+        <div class="spacer"></div>
+        <div class="error" style="grid-column: span 2;">
+            <% if (error) { %>
+                <p>Message: <%= error %></p>
+            <% } %>
+        </div>
+        <div class="spacer"></div>
+        <h5>Account details:</h5>
+        <div class="spacer"></div>
+        <div>
+            <label for="email">eMail address:</label>
+            <input type="email" name="email" id="email">
+        </div>
+        <div>
+            <label for="passwd">Password*</label>
+            <input type="password" name="passwd" id="passwd" required>
+        </div>
+        <div class="spacer"></div>
+        <div>
+            <button type="submit">Login!</button>
+        </div>
+        <div class="spacer"></div>
+    </form>
+</body>
+
+</html>
