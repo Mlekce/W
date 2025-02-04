@@ -1,0 +1,83 @@
+@font-face {
+    font-family: 'Open Sans';
+    src: url(../fonts/OpenSans-Medium.ttf);
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url(../fonts/Montserrat-SemiBold.ttf);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Monserrat';
+}
+
+body {
+    min-height: 100vh;
+    font-size: 16px;
+    font-family: 'Open Sans';
+}
+
+.container {
+    margin: auto;
+    max-width: 1118px;
+    border: 1px solid black;
+}
+/* Header */
+header {
+    background-color: rgba(252,70,107,1);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+}
+
+.banner {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.banner + form {
+    display: flex;
+}
+
+.banner + form > input[type="search"] {
+    min-width: 400px;
+    max-width: 400px;
+    box-shadow: 0px 0px 2px rgba(0,0,0,0.4);
+    border: none;
+    border-radius: 5px 0 0 5px;
+    color: rgba(0,0,0,0.7);
+    padding: 4px;
+    font-size: 21px;
+}
+
+.banner + form > button {
+    margin-left: 0;
+    padding: 4px 10px;
+    font-size: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0 5px 5px 0;
+}
+
+.header-top > form + div {
+    display: flex;
+    gap: 16px;
+}

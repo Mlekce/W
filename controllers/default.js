@@ -3,7 +3,8 @@ const Customer = require("../models/customers");
 
 
 function getHome(req, res) {
-    res.send("Hello from express Server")
+    res.render("homePage");
+    return
 }
 
 function getSignup(req, res) {
